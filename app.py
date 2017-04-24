@@ -48,7 +48,6 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     send_text = weather_infor()
-                    #send_text = '''嗨我是chatbot\n很高興認識你'''
                     send_message(sender_id, send_text)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
