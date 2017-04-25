@@ -49,7 +49,7 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
-                    send_text = weather_infor()
+                    send_text = message_response(message_text)
                     send_message(sender_id, send_text)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
@@ -129,8 +129,17 @@ def weather_infor():
 
 
 def message_response(message):
-    structure = requests.get("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/fb4a8df0-563c-4930-8e35-bb1755e6fa55?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0.0&verbose=true&q=%E4%B8%89%E6%B8%9B%E4%BA%94")
-    structure = json.loads(structure)
+    s = luis.Luis("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c88fd2ed-73f8-4255-ae7f-7c07824252f6?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0&verbose=true&q=")
+    text = s.analyze(message)
+    if text.best_intent().intent == 'Weather':
+        for i in range(text):
+            if text.entities[i].type == 'Taipei':
+                return weather_infor()
+    else:
+        return "我聽不懂你在說什麼"
+
+
+
 
 
 
