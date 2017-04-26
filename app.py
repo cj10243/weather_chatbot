@@ -135,8 +135,7 @@ def message_response(message):
         for i in range(text):
             if text.entities[i].type == 'Taipei':
                 return weather_infor()
-    else:
-        return "我聽不懂你在說什麼"
+
 
 
 
