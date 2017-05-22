@@ -3,7 +3,7 @@
 import os
 import sys
 import json
-
+import luis
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request
@@ -28,12 +28,12 @@ def verify():
             return "Verification token mismatch", 403
         return request.args["hub.challenge"], 200
 
-    return "Hello world", 200
+    return "認證成功", 200
 
 
 @app.route('/', methods=['POST'])
 def webhook():
-
+    print("connect")
     # endpoint for processing incoming messaging events
 
     data = request.get_json()
@@ -49,8 +49,10 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
+                    print(message_text)
                     send_text = message_response(message_text)
-                    send_message(sender_id, send_text)
+                    print(send_text)
+                    send_message(sender_id, message_text)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -100,8 +102,21 @@ def get_soup(url):
     soup = BeautifulSoup(res.text, "lxml")  # 存成文字內容
     return soup
 
+def getIPAddress():
+    soup = get_soup("http://www.whatismyip.com/automation/n09230945.asp")
+    address = soup.strong.get_text().split(" ")[3].replace('is', '').lstrip()
+    return address
 
-def weather_infor():
+
+
+def message_response(message):
+    s = luis.Luis("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c88fd2ed-73f8-4255-ae7f-7c07824252f6?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0&verbose=true&q=")
+    text = "你好"
+    text = s.analyze(message)
+    if text.best_intent().intent == 'AskWeather':
+        return AskWeather(text)
+
+def AskWeather(text):
     url = "http://www.cwb.gov.tw/V7/forecast/taiwan/Taipei_City.htm"
     soup = get_soup(url)
 
@@ -126,23 +141,20 @@ def weather_infor():
             message += j + '：' + k + '\n'
             # print('------------------------------------------')
     return message
-
-
-def message_response(message):
-    s = luis.Luis("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c88fd2ed-73f8-4255-ae7f-7c07824252f6?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0&verbose=true&q=")
-    text = s.analyze(message)
-    if text.best_intent().intent == 'Weather':
-        for i in range(text):
-            if text.entities[i].type == 'Taipei':
-                return weather_infor()
+def AskHumidity(text):
+    pass
+def AskTemperature(text):
+    pass
+def AskUV(text):
+    pass
 
 
 
 
+message = "今天台北天氣怎樣"
+#print(message_response(message))
 
-
-
-print(weather_infor())
+#print(AskWeather('Taipei'))
 
 if __name__ == '__main__':
     app.run(debug=True)
