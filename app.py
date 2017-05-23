@@ -49,6 +49,10 @@ def webhook():
                     sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
+                    lat = messaging_event["attachments"]["payload"]["coordinates"]["lat"]
+                    long = messaging_event["attachments"]["payload"]["coordinates"]["long"]
+                    print(lat)
+                    print(long)
                     print(message_text)
                     send_text = "HI"
                     send_text += message_response(message_text)
@@ -91,11 +95,30 @@ def send_message(recipient_id, message_text):
         log(r.text)
 
 
+
 def log(message):  # simple wrapper for logging to stdout on heroku
     print (str(message))
     sys.stdout.flush()
 
-
+def ask_location(recipient_id):
+    params = {
+        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "text": "請輸入您的所在位置"
+        }
+    })
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log(r.text)
 # 爬蟲中央氣象局氣象資訊
 def get_soup(url):
     res = requests.get(url)  # 從網址存網站頁面
@@ -114,6 +137,7 @@ def message_response(message):
     s = luis.Luis("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c88fd2ed-73f8-4255-ae7f-7c07824252f6?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0&verbose=true&q=")
     text = "你好"
     text = s.analyze(message)
+    print(text.entities)
     if text.best_intent().intent == 'AskWeather':
         return AskWeather(text)
 
@@ -152,8 +176,8 @@ def AskUV(text):
 
 
 
-message = "今天台北天氣怎樣"
-#print(message_response(message))
+message = "今天台北市天氣怎樣"
+print(message_response(message))
 
 #print(AskWeather('Taipei'))
 
