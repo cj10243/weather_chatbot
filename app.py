@@ -7,8 +7,10 @@ import luis
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request
+import math
 #from flask.ext.mysql import MySQL
 app = Flask(__name__)
+stations = {""}
 '''
 mysql = MySQL(
 app.config['MYSQL_DATABASE_USER'] = 'joanthan'
@@ -51,11 +53,12 @@ def webhook():
                     message_text = messaging_event["message"]["text"]  # the message's text
                     lat = messaging_event["attachments"]["payload"]["coordinates"]["lat"]
                     long = messaging_event["attachments"]["payload"]["coordinates"]["long"]
+                    origin = (lat,long)
+                    station = get_shortest_distance()
                     print(lat)
                     print(long)
                     print(message_text)
-                    send_text = "HI"
-                    send_text += message_response(message_text)
+                    send_text = message_response(message_text)
                     print(send_text)
                     send_message(sender_id, send_text)
 
@@ -119,6 +122,25 @@ def ask_location(recipient_id):
     if r.status_code != 200:
         log(r.status_code)
         log(r.text)
+
+
+def get_station(origin):
+    pass
+
+
+def distance(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6378.137  # km
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) \
+                                                  * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(
+        dlon / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    d = radius * c
+    return d
 # 爬蟲中央氣象局氣象資訊
 def get_soup(url):
     res = requests.get(url)  # 從網址存網站頁面
@@ -138,9 +160,10 @@ def message_response(message):
     text = "你好"
     text = s.analyze(message)
     print(text.entities)
+    print(text.best_intent())
     if text.best_intent().intent == 'AskWeather':
         return AskWeather(text)
-
+'''
 def AskWeather(text):
     url = "http://www.cwb.gov.tw/V7/forecast/taiwan/Taipei_City.htm"
     soup = get_soup(url)
@@ -166,10 +189,26 @@ def AskWeather(text):
             message += j + '：' + k + '\n'
             # print('------------------------------------------')
     return message
-def AskHumidity(text):
-    pass
-def AskTemperature(text):
-    pass
+'''
+def crawler(text):
+    url = "http://www.cwb.gov.tw/V7/observe/24real/Data/46692.htm"
+    soup = get_soup(url)
+    for i in soup.table.tr.next_siblings:
+        if i == '\n':
+            pass
+        else:
+            time = str(i).split("</th>")[0].split(">")[2]
+            print("時間： {}".format(time))  # 時間：月/日 時：分
+            tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度
+            print("攝氏溫度： {}".format(tpr))
+            wet = str(i).split("</td>")[1].split(">")[1]
+            print("相對溼度： {}").format(wet)  # 相對溼度
+            AskHumidity(wet)
+            AskTemperature(tpr)
+def AskHumidity(text,wet):
+    return wet
+def AskTemperature(text,tpr):
+    return tpr
 def AskUV(text):
     pass
 
