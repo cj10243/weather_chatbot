@@ -8,19 +8,48 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request
 import math
+import pymysql
+import database
+from datetime import datetime
 #from flask.ext.mysql import MySQL
+try:
+    conn = pymysql.connect(host='localhost',port=3306,user='root',passwd='nhshbot',db='chatbot')
+    cur = conn.cursor()
+except ProgrammingError as ex:
+    if cursor:
+        print("\n".join(cursor.messages))
+        # You can show only the last error like this.
+        # print cursor.messages[-1]
+    else:
+        print("\n".join(self.db.messages))
+        # Same here you can also do.
+        # print self.db.messages[-1]
+
+class Weather:
+    def __init__(self):
+        self.tpr = cur.fetchone()[1]
+        self.wet = cur.fetchone()[2]
+        self.uv = cur.fetchone()[3]
+
+    def AskTemperature(self):
+        return self.tpr
+    def AskHumidity(self):
+        return self.wet
+    def AskUV(self):
+        return self.uv
 app = Flask(__name__)
+weather_list = ["temperature","humidity","uv"]
 stations = {""}
-'''
+
 mysql = MySQL(
-app.config['MYSQL_DATABASE_USER'] = 'joanthan'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'PASS'
-app.config['MYSQL_DATABASE_DB'] = 'Weather'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'nhshbot'
+app.config['MYSQL_DATABASE_DB'] = 'chatbot'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 conn = mysql.connect()
 cursor = conn.cursor()
 data = cursor.fetchall()
-'''
+
 @app.route('/', methods=['GET'])
 def verify():
     # when the endpoint is registered as a webhook, it must echo back
@@ -136,8 +165,7 @@ def distance(origin, destination):
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
     a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) \
-                                                  * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(
-        dlon / 2)
+                                                  * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(dlon / 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     d = radius * c
     return d
@@ -161,10 +189,25 @@ def message_response(message):
     text = s.analyze(message)
     print(text.entities)
     print(text.best_intent())
-    if text.best_intent().intent == 'AskWeather':
-        return AskWeather(text)
-'''
-def AskWeather(text):
+    intent = ""
+    answer = ""
+    if text.best_intent().intent == 'AskTemperature':
+        intent += "t"
+        answer += '\n'
+        answer += AskTemperature()
+    if text.best_intent().intent == 'AskHumidity':
+        intent += "h"
+        answer += AskHumidity()
+    if text.best_intent().intent == 'AskUV':
+        intent += "u"
+        answer += AskUV()
+    if intent == "thu" or intent =="":
+        if text.best_intent().intent == 'AskWeather':
+            return AskWeather(text)
+        else:
+            return "抱歉，我聽不懂你在說什麼"
+    return answer
+def AskForecast(text):
     url = "http://www.cwb.gov.tw/V7/forecast/taiwan/Taipei_City.htm"
     soup = get_soup(url)
 
@@ -189,36 +232,26 @@ def AskWeather(text):
             message += j + '：' + k + '\n'
             # print('------------------------------------------')
     return message
-'''
-def crawler(text):
-    url = "http://www.cwb.gov.tw/V7/observe/24real/Data/46692.htm"
-    soup = get_soup(url)
-    for i in soup.table.tr.next_siblings:
-        if i == '\n':
-            pass
-        else:
-            time = str(i).split("</th>")[0].split(">")[2]
-            print("時間： {}".format(time))  # 時間：月/日 時：分
-            tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度
-            print("攝氏溫度： {}".format(tpr))
-            wet = str(i).split("</td>")[1].split(">")[1]
-            print("相對溼度： {}").format(wet)  # 相對溼度
-            AskHumidity(wet)
-            AskTemperature(tpr)
-def AskHumidity(text,wet):
-    return wet
-def AskTemperature(text,tpr):
-    return tpr
-def AskUV(text):
-    pass
+
+def test_message_response(message):
+    s = luis.Luis("https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/c88fd2ed-73f8-4255-ae7f-7c07824252f6?subscription-key=b5a6e33be4244c189920b61a0249eefd&timezoneOffset=0&verbose=true&q=")
+    text = "你好"
+    text = s.analyze(message)
+    print(text.entities)
+    count = 0
+    for entity in text.entities:
+        print(entity.type)
+        if entity.type in weather_list:
+            count += 1
+    print(text.best_intent())
+    print(text.intents)
 
 
-
-
-message = "今天台北市天氣怎樣"
-print(message_response(message))
-
+message = "今天的氣溫和紫外線怎樣"
+print(test_message_response(message))
 #print(AskWeather('Taipei'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
