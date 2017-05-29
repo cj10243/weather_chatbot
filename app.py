@@ -38,9 +38,10 @@ class Weather:
     def AskUV(self):
         return self.uv
 app = Flask(__name__)
-weather_list = ["temperature","humidity","uv"]
-stations = {""}
 
+weather_list = ["temperature","humidity","uv"]
+stations = {"鞍部":{121.5297306,25.18258611},"台北":{121.514853,25.037658},"大直":{121.542853,25.078047}}
+'''
 mysql = MySQL(
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'nhshbot'
@@ -49,7 +50,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 conn = mysql.connect()
 cursor = conn.cursor()
 data = cursor.fetchall()
-
+'''
 @app.route('/', methods=['GET'])
 def verify():
     # when the endpoint is registered as a webhook, it must echo back

@@ -5,8 +5,43 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pymysql
 import database
-import distance
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 
+# available since 2.4.0
+from selenium.webdriver.support.ui import WebDriverWait
+
+# available since 2.26.0
+from selenium.webdriver.support import expected_conditions as EC
+
+# 建立 driver
+driver = webdriver.Firefox()
+
+# 去 google
+driver.get("http://www.google.com")
+
+# 顯示標題
+print(driver.title)
+
+# 找到搜尋框
+inputElement = driver.find_element_by_name("q")
+
+# 搜尋框輸入字
+inputElement.send_keys("cheese!")
+
+# 提交
+inputElement.submit()
+
+try:
+    # 直到標題有 cheese
+    WebDriverWait(driver, 10).until(EC.title_contains("cheese!"))
+
+    # 顯示標題，可看到 cheese
+    print(driver.title)
+except TimeoutException:
+    print('time out')
+finally:
+    driver.quit()
 
 
 
@@ -54,9 +89,10 @@ def station_crawler():
         #print(i.get_text()) #ex: 鞍部
         station_id = i['href'].split(".")[0]
         #print(i['href'].split(".")[0]) #ex:46691
-        url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
+        #url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
+        url = "http://www.cwb.gov.tw/V7/google/46691_map.htm"
         soup = get_soup(url)
-        print(soup)
+        print(str(soup.get_text).split("<"))
         with database.Database() as db:
             sql = """SELECT * FROM  station"""
             db.execute(sql)
