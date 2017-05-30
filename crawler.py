@@ -7,7 +7,6 @@ import pymysql
 import database
 
 
-
 def get_soup(url):
     res = requests.get(url)  # 從網址存網站頁面
     res.encoding = 'utf-8'  # 修正requests和bs4自行猜測的編碼為utf-8
@@ -29,6 +28,8 @@ def weather_crawler():
                 db.execute(sql)
                 print(time)
                 if time > db.fetchone()[0]:
+                print(db.fetchone()[0])
+                if db.fetchone()[0] > time:
                     print("時間： {}".format(time))  # ex: 2017-05-29 13:30:00
                     tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度 ex:29.5
                     print("攝氏溫度： {}".format(tpr))
@@ -37,20 +38,21 @@ def weather_crawler():
                     count += 1
                     sql = """INSERT INTO weather (time,tpr,wet,uv) VALUES (%s,%s,%s,%s)"""
                     db.execute(sql, (time, tpr, wet, None))
-
-
-
-
-
     print(count)
+
+
+
+
+
 def station_crawler():
-    url = "http://www.cwb.gov.tw/V7/observe/real/ObsN.htm"
+    url = "http://www.cwb.gov.tw/V7/observe/real/ObsN.htm"#北部
     soup = get_soup(url)
     print(soup.find("table",id=63).findAll("a"))
     for i in soup.find("table",id=63).findAll("a"):
         name = i.get_text()
-        #print(i.get_text()) #ex: 鞍部
+        print(name) #ex: 鞍部
         station_id = i['href'].split(".")[0]
+<<<<<<< HEAD
         #print(i['href'].split(".")[0]) #ex:46691
         url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
         soup = get_soup(url)
@@ -63,16 +65,35 @@ def station_crawler():
         lat = float(str(soup)[lat_id + 4:lat_id + 12])
         print(lng)
         print(lat)
+=======
+        print(i['href'].split(".")[0]) #ex:46691
+        #url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
+        url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
+        soup = get_soup(url)
+        #print(str(soup))
+        id_lat = str(soup).find("lat:")
+        id_lng = str(soup).find("lng:")
+        print(str(soup)[id_lat+4:id_lat+13])
+        print(str(soup)[id_lng + 4:id_lng + 13])
+        lat = float(str(soup)[id_lat+4:id_lat+13])#[4579:4595]
+        lng = float(str(soup)[id_lng + 4:id_lng + 13])
+        print(type(lat))
+        print(type(lng))
+>>>>>>> ff047a63493be95952493f4870d45fa2e60bea5f
         with database.Database() as db:
             sql = """SELECT * FROM  station"""
             db.execute(sql)
             sql = """INSERT INTO station (name,station_id, lng,lat) VALUES (%s,%s,%s,%s)"""
             db.execute(sql, (name,station_id, lng,lat))
+<<<<<<< HEAD
 #weather_crawler()
+=======
+weather_crawler()
+>>>>>>> ff047a63493be95952493f4870d45fa2e60bea5f
 
 
 
-station_crawler()
+#station_crawler()
 
 
 
