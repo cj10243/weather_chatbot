@@ -5,9 +5,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pymysql
 import database
-import distance
-
-
 
 
 
@@ -30,7 +27,8 @@ def weather_crawler():
             with database.Database() as db:
                 sql = """SELECT * FROM  weather"""
                 db.execute(sql)
-                if db.fetchone()[0] > time:
+                print(time)
+                if time > db.fetchone()[0]:
                     print("時間： {}".format(time))  # ex: 2017-05-29 13:30:00
                     tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度 ex:29.5
                     print("攝氏溫度： {}".format(tpr))
@@ -54,15 +52,23 @@ def station_crawler():
         #print(i.get_text()) #ex: 鞍部
         station_id = i['href'].split(".")[0]
         #print(i['href'].split(".")[0]) #ex:46691
-        url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
+        url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
         soup = get_soup(url)
-        print(soup)
+        #print(str(soup).find("lon="))
+        lng_id = str(soup).find("lon=")
+        lat_id = str(soup).find("lat=")
+        #print(lat_id)
+        #print(str(soup)[lng_id+4:lng_id+15])
+        lng = float(str(soup)[lng_id + 4:lng_id + 13])
+        lat = float(str(soup)[lat_id + 4:lat_id + 12])
+        print(lng)
+        print(lat)
         with database.Database() as db:
             sql = """SELECT * FROM  station"""
             db.execute(sql)
-            #sql = """INSERT INTO stationi (time,tpr,wet,uv) VALUES (%s,%s,%s,%s)"""
-            #db.execute(sql, (None, name,station_id, None))
-#crawler()
+            sql = """INSERT INTO station (name,station_id, lng,lat) VALUES (%s,%s,%s,%s)"""
+            db.execute(sql, (name,station_id, lng,lat))
+#weather_crawler()
 
 
 

@@ -4,7 +4,7 @@ import pymysql
 class Database:
 
     def __enter__(self):
-        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='nhshbot', db='chatbot')
+        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='ji3g45/4cl4up3', db='chatbot',use_unicode=True, charset="utf8")
         self.cur = self.conn.cursor()
         return self.cur
 
@@ -12,8 +12,24 @@ class Database:
         self.conn.commit()
         self.conn.close()
 
+#table chatbot.weather
+'''
+create table weather ( time timestamp default current_timestamp on update current_timestamp,
+                id smallint,
+                tpr float(3,1),
+                wet float(3,1),
+                uv tinyint(2),
+                 foreign key (id) references chatbot.station(pk));
 
+'''
 
+#table chatbot.staion
+'''
+ create table station(pk smallint(5) not null auto_increment,
+ name varchar(5),
+ station_id varchar(5) ,
+ lng double(10,6),
+ lat double(10,6),
+ primary key (pk));
+'''
 
-
-Database
