@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="54bd3301-d2f2-409f-ad35-8977cf6e9372" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.py" afterPath="$PROJECT_DIR$/app.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crawler.py" afterPath="$PROJECT_DIR$/crawler.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database.py" afterPath="$PROJECT_DIR$/database.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,8 +23,8 @@
       <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="88" column="37" lean-forward="false" selection-start-line="88" selection-start-column="37" selection-end-line="88" selection-end-column="37" />
+            <state relative-caret-position="342">
+              <caret line="19" column="8" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
               <folding>
                 <element signature="e#43#52#0" expanded="true" />
               </folding>
@@ -44,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="crawler.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="crawler.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crawler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="61" column="41" lean-forward="false" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="41" />
+            <state relative-caret-position="-198">
+              <caret line="22" column="32" lean-forward="true" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
               <folding>
                 <element signature="e#43#58#0" expanded="true" />
               </folding>
@@ -56,11 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="database.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="20" lean-forward="true" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+            <state relative-caret-position="216">
+              <caret line="12" column="25" lean-forward="true" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -94,9 +92,9 @@
         <option value="$PROJECT_DIR$/runtime.txt" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/database.py" />
         <option value="$PROJECT_DIR$/crawler.py" />
+        <option value="$PROJECT_DIR$/app.py" />
       </list>
     </option>
   </component>
@@ -383,7 +381,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="-4" width="1855" height="1084" extended-state="7" />
+    <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17088948" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -670,8 +668,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="88" column="37" lean-forward="false" selection-start-line="88" selection-start-column="37" selection-end-line="88" selection-end-column="37" />
+        <state relative-caret-position="342">
+          <caret line="19" column="8" lean-forward="false" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="8" />
           <folding>
             <element signature="e#43#52#0" expanded="true" />
           </folding>
@@ -686,21 +684,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="20" lean-forward="true" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crawler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="61" column="41" lean-forward="false" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="41" />
+        <state relative-caret-position="-198">
+          <caret line="22" column="32" lean-forward="true" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
           <folding>
             <element signature="e#43#58#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="25" lean-forward="true" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>

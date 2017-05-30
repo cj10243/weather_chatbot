@@ -12,19 +12,13 @@ import pymysql
 import database
 from datetime import datetime
 #from flask.ext.mysql import MySQL
-'''
+
 try:
     conn = pymysql.connect(host='localhost',port=3306,user='root',passwd='nhshbot',db='chatbot')
     cur = conn.cursor()
-except ProgrammingError as ex:
-    if cursor:
-        print("\n".join(cursor.messages))
-        # You can show only the last error like this.
-        # print cursor.messages[-1]
-    else:
-        print("\n".join(self.db.messages))
-        # Same here you can also do.
-        # print self.db.messages[-1]
+except:
+    pass
+
 
 class Weather:
     def __init__(self):
