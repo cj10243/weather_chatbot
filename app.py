@@ -13,25 +13,19 @@ import database
 from datetime import datetime
 #from flask.ext.mysql import MySQL
 app = Flask(__name__)
-try:
-    conn = pymysql.connect(host='localhost',port=3306,user='root',passwd='nhshbot',db='chatbot')
-    cur = conn.cursor()
-except:
-    pass
 
-
-class Weather:
-    def __init__(self):
-        self.tpr = cur.fetchone()[1]
-        self.wet = cur.fetchone()[2]
-        self.uv = cur.fetchone()[3]
-
-    def AskTemperature(self):
-        return self.tpr
-    def AskHumidity(self):
-        return self.wet
-    def AskUV(self):
-        return self.uv
+def AskTemperature():
+    with database.Database() as db:
+        return "溫度:{}".format(db.fetchone()[1])
+def AskHumidity():
+    with database.Database() as db:
+        return "濕度:{}".format(db.fetchone()[2])
+def AskUV():
+    with database.Database() as db:
+        return "紫外線值:{}".format(db.fetchone()[3])
+def AskWeather():
+    with database.Database() as db:
+        return AskTemperature()+'\n'+AskHumidity()+'\n'+AskUV()
 
 
 weather_list = ["temperature","humidity","uv"]
@@ -68,9 +62,9 @@ def webhook():
                     recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
                     lat = messaging_event["attachments"]["payload"]["coordinates"]["lat"]
-                    long = messaging_event["attachments"]["payload"]["coordinates"]["long"]
-                    origin = (lat,long)
-                    station = get_shortest_distance()
+                    lng = messaging_event["attachments"]["payload"]["coordinates"]["long"]
+                    origin = (lat,lng)
+                    station = get_station(origin)
                     print(lat)
                     print(long)
                     print(message_text)
@@ -141,7 +135,14 @@ def ask_location(recipient_id):
 
 
 def get_station(origin):
-    pass
+    with database.Database() as db:
+        sql = """SELECT lng,lat FROM station"""
+        db.execute(sql)
+        min = 0
+        for desti in db.fetchall():
+            if distance(origin,desti)<min:
+                station = desti
+        return desti
 
 
 def distance(origin, destination):
@@ -156,6 +157,7 @@ def distance(origin, destination):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     d = radius * c
     return d
+print(get_station((121.5297306,25.18258611)))
 # 爬蟲中央氣象局氣象資訊
 def get_soup(url):
     res = requests.get(url)  # 從網址存網站頁面
@@ -178,22 +180,31 @@ def message_response(message):
     print(text.best_intent())
     intent = ""
     answer = ""
-    if text.best_intent().intent == 'AskTemperature':
-        intent += "t"
-        answer += '\n'
-        answer += AskTemperature()
-    if text.best_intent().intent == 'AskHumidity':
-        intent += "h"
-        answer += AskHumidity()
-    if text.best_intent().intent == 'AskUV':
-        intent += "u"
-        answer += AskUV()
-    if intent == "thu" or intent =="":
-        if text.best_intent().intent == 'AskWeather':
-            return AskWeather(text)
+    count = 0
+    for intent in text.entities:
+        if intent.type in weather_list:
+            count += 1
+    if count < 3:
+        for i,j in enumerate(text.intent()):
+            if i == count:
+                break
+            if j.intent == 'AskTemperature':
+                answer += AskTemperature()
+                answer += '\n'
+            if j.intent == "AskHumidity":
+                answer += AskHumidity()
+                answer += '\n'
+            if j.intent == "AskUV":
+                answer += AskUV()
+                answer += '\n'
+    else:
+        if j.intent == 'Weather':
+            answer += AskHumidity()
         else:
             return "抱歉，我聽不懂你在說什麼"
+
     return answer
+
 def AskForecast(text):
     url = "http://www.cwb.gov.tw/V7/forecast/taiwan/Taipei_City.htm"
     soup = get_soup(url)

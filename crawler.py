@@ -26,6 +26,7 @@ def weather_crawler():
             with database.Database() as db:
                 sql = """SELECT * FROM  weather"""
                 db.execute(sql)
+                print(db.fetchone()[0])
                 if db.fetchone()[0] > time:
                     print("時間： {}".format(time))  # ex: 2017-05-29 13:30:00
                     tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度 ex:29.5
@@ -35,12 +36,12 @@ def weather_crawler():
                     count += 1
                     sql = """INSERT INTO weather (time,tpr,wet,uv) VALUES (%s,%s,%s,%s)"""
                     db.execute(sql, (time, tpr, wet, None))
-
-
-
-
-
     print(count)
+
+
+
+
+
 def station_crawler():
     url = "http://www.cwb.gov.tw/V7/observe/real/ObsN.htm"#北部
     soup = get_soup(url)
@@ -67,7 +68,7 @@ def station_crawler():
             db.execute(sql)
             sql = """INSERT INTO station (name,station_id, lng,lat) VALUES (%s,%s,%s,%s)"""
             db.execute(sql, (name,station_id, lng,lat))
-#crawler()
+weather_crawler()
 
 
 

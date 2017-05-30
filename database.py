@@ -2,6 +2,11 @@
 # /usr/bin/python3
 import pymysql
 class Database:
+    '''
+    def __init__(self):
+        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='nhshbot', db='chatbot',use_unicode=True, charset="utf8")
+        self.cur = self.conn.cursor()
+    '''
 
     def __enter__(self):
         self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='nhshbot', db='chatbot',use_unicode=True, charset="utf8")
