@@ -28,7 +28,7 @@ create table weather ( time timestamp default current_timestamp on update curren
 
 '''
 
-table chatbot.staion
+#table chatbot.staion
 '''
  create table station(pk smallint(5) not null auto_increment,
  name varchar(5),

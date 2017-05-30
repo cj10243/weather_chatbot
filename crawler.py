@@ -28,8 +28,6 @@ def weather_crawler():
                 db.execute(sql)
                 print(time)
                 if time > db.fetchone()[0]:
-                print(db.fetchone()[0])
-                if db.fetchone()[0] > time:
                     print("時間： {}".format(time))  # ex: 2017-05-29 13:30:00
                     tpr = str(i).split("</td>")[0].split(">")[4]  # 攝氏溫度 ex:29.5
                     print("攝氏溫度： {}".format(tpr))
@@ -52,7 +50,6 @@ def station_crawler():
         name = i.get_text()
         print(name) #ex: 鞍部
         station_id = i['href'].split(".")[0]
-<<<<<<< HEAD
         #print(i['href'].split(".")[0]) #ex:46691
         url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
         soup = get_soup(url)
@@ -65,7 +62,7 @@ def station_crawler():
         lat = float(str(soup)[lat_id + 4:lat_id + 12])
         print(lng)
         print(lat)
-=======
+
         print(i['href'].split(".")[0]) #ex:46691
         #url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
         url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
@@ -79,17 +76,14 @@ def station_crawler():
         lng = float(str(soup)[id_lng + 4:id_lng + 13])
         print(type(lat))
         print(type(lng))
->>>>>>> ff047a63493be95952493f4870d45fa2e60bea5f
         with database.Database() as db:
             sql = """SELECT * FROM  station"""
             db.execute(sql)
             sql = """INSERT INTO station (name,station_id, lng,lat) VALUES (%s,%s,%s,%s)"""
             db.execute(sql, (name,station_id, lng,lat))
-<<<<<<< HEAD
-#weather_crawler()
-=======
+
+
 weather_crawler()
->>>>>>> ff047a63493be95952493f4870d45fa2e60bea5f
 
 
 
