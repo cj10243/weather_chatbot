@@ -5,45 +5,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pymysql
 import database
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-
-# available since 2.4.0
-from selenium.webdriver.support.ui import WebDriverWait
-
-# available since 2.26.0
-from selenium.webdriver.support import expected_conditions as EC
-
-# 建立 driver
-driver = webdriver.Firefox()
-
-# 去 google
-driver.get("http://www.google.com")
-
-# 顯示標題
-print(driver.title)
-
-# 找到搜尋框
-inputElement = driver.find_element_by_name("q")
-
-# 搜尋框輸入字
-inputElement.send_keys("cheese!")
-
-# 提交
-inputElement.submit()
-
-try:
-    # 直到標題有 cheese
-    WebDriverWait(driver, 10).until(EC.title_contains("cheese!"))
-
-    # 顯示標題，可看到 cheese
-    print(driver.title)
-except TimeoutException:
-    print('time out')
-finally:
-    driver.quit()
-
-
 
 
 def get_soup(url):
@@ -81,28 +42,36 @@ def weather_crawler():
 
     print(count)
 def station_crawler():
-    url = "http://www.cwb.gov.tw/V7/observe/real/ObsN.htm"
+    url = "http://www.cwb.gov.tw/V7/observe/real/ObsN.htm"#北部
     soup = get_soup(url)
     print(soup.find("table",id=63).findAll("a"))
     for i in soup.find("table",id=63).findAll("a"):
         name = i.get_text()
-        #print(i.get_text()) #ex: 鞍部
+        print(name) #ex: 鞍部
         station_id = i['href'].split(".")[0]
-        #print(i['href'].split(".")[0]) #ex:46691
+        print(i['href'].split(".")[0]) #ex:46691
         #url = "http://www.cwb.gov.tw/V7/observe/real/{}.htm#ui-tabs-3".format(station_id)
-        url = "http://www.cwb.gov.tw/V7/google/46691_map.htm"
+        url = "http://www.cwb.gov.tw/V7/google/{}_map.htm".format(station_id)
         soup = get_soup(url)
-        print(str(soup.get_text).split("<"))
+        #print(str(soup))
+        id_lat = str(soup).find("lat:")
+        id_lng = str(soup).find("lng:")
+        print(str(soup)[id_lat+4:id_lat+13])
+        print(str(soup)[id_lng + 4:id_lng + 13])
+        lat = float(str(soup)[id_lat+4:id_lat+13])#[4579:4595]
+        lng = float(str(soup)[id_lng + 4:id_lng + 13])
+        print(type(lat))
+        print(type(lng))
         with database.Database() as db:
             sql = """SELECT * FROM  station"""
             db.execute(sql)
-            #sql = """INSERT INTO stationi (time,tpr,wet,uv) VALUES (%s,%s,%s,%s)"""
-            #db.execute(sql, (None, name,station_id, None))
+            sql = """INSERT INTO station (name,station_id, lng,lat) VALUES (%s,%s,%s,%s)"""
+            db.execute(sql, (name,station_id, lng,lat))
 #crawler()
 
 
 
-station_crawler()
+#station_crawler()
 
 
 

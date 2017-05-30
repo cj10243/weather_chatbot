@@ -12,6 +12,7 @@ import pymysql
 import database
 from datetime import datetime
 #from flask.ext.mysql import MySQL
+'''
 try:
     conn = pymysql.connect(host='localhost',port=3306,user='root',passwd='nhshbot',db='chatbot')
     cur = conn.cursor()
@@ -37,6 +38,7 @@ class Weather:
         return self.wet
     def AskUV(self):
         return self.uv
+'''
 app = Flask(__name__)
 
 weather_list = ["temperature","humidity","uv"]

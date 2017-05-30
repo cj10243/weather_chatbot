@@ -4,7 +4,7 @@ import pymysql
 class Database:
 
     def __enter__(self):
-        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='nhshbot', db='chatbot')
+        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='nhshbot', db='chatbot',use_unicode=True, charset="utf8")
         self.cur = self.conn.cursor()
         return self.cur
 
@@ -13,7 +13,14 @@ class Database:
         self.conn.close()
 
 
-
-
-
-Database
+'''
+MySQL chatbot.station 
+----------------------
+CREATE TABLE station(
+    pk SMALLINT(5) AUTO_INCREMENT,
+    name VARCHAR(5),
+    station_id VARCHAR(6),
+    lng DOUBLE(10,6),
+    lat DOUBLE(10,6),
+    PRIMARY KEY(pk));
+'''
