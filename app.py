@@ -32,7 +32,6 @@ class Weather:
         return self.wet
     def AskUV(self):
         return self.uv
-'''
 app = Flask(__name__)
 
 weather_list = ["temperature","humidity","uv"]
