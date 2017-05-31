@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 # /usr/bin/python3
 import pymysql
+import os
+#import urlparse
+from urllib.parse import urlparse
+print(locals())
+url = urlparse(os.environ['DATABASE_URL'])
+print(url)
+#mysql://user:pass@localhost/dbname
 class Database:
     '''
     def __init__(self):
@@ -9,7 +16,7 @@ class Database:
     '''
 
     def __enter__(self):
-        self.conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='ji3g45/4cl4up3', db='chatbot',use_unicode=True, charset="utf8")
+        self.conn = pymysql.connect(host='us-cdbr-iron-east-03.cleardb.net', port=3306, user='b5bbdf4913eebb', passwd='a0c6509d', db='heroku_f1a371e85a2a03f',use_unicode=True, charset="utf8")
         self.cur = self.conn.cursor()
         return self.cur
 
